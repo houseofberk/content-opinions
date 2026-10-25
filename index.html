@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House of Berk</title>
+    
+    <!-- Google Fonts for Elegant Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS for robust layout and styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            /* Fallback color in case JS canvas reading is blocked by local security (CORS) */
+            background-color: #112035; 
+            color: #C5A059; /* Elegant Gold */
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            /* Smooth transition when the JS applies the exact color */
+            transition: background-color 0.8s ease-in-out; 
+        }
+
+        /* Typography styles */
+        .main-text {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .sub-text {
+            font-size: 1rem;
+            font-style: italic;
+            opacity: 0.85;
+            letter-spacing: 0.03em;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .main-text { font-size: 2.25rem; }
+            .sub-text { font-size: 1.25rem; }
+            .page-title { font-size: 3.5rem; }
+        }
+
+        /* Navigation styles */
+        .nav-link {
+            position: relative;
+            cursor: pointer;
+            text-decoration: none;
+            color: #C5A059;
+            transition: opacity 0.3s ease;
+        }
+        .nav-link:hover {
+            opacity: 0.75;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 50%;
+            background-color: #C5A059;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* View transitions */
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .view-section.active {
+            display: flex;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#C5A059] selection:text-[#112035]">
+
+    <!-- Elegant Navigation Bar -->
+    <header class="w-full p-8 flex flex-wrap justify-center gap-x-6 gap-y-4 md:gap-x-8 text-lg md:text-xl">
+        <a onclick="navigate('home')" id="nav-home" class="nav-link active">Home</a>
+        <a onclick="navigate('opinions')" id="nav-opinions" class="nav-link">Opinions</a>
+        <a onclick="navigate('ebooks')" id="nav-ebooks" class="nav-link">E-books</a>
+        <a onclick="navigate('media')" id="nav-media" class="nav-link">Media Projects</a>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col items-center justify-center p-6 text-center">
+        
+        <!-- Home View -->
+        <section id="view-home" class="view-section active flex-col items-center justify-center w-full max-w-4xl mx-auto">
+            <img id="logo" src="Gemini_Generated_Image_9y1n2d9y1n2d9y1n.jpg" alt="House of Berk Logo" class="max-w-[250px] md:max-w-[350px] w-full border-none outline-none mb-6 shadow-none">
+            <p class="main-text">Opinions, E-books, and Media Projects</p>
+            <p class="sub-text">Website currently under construction</p>
+        </section>
+
+        <!-- Opinions View -->
+        <section id="view-opinions" class="view-section flex-col items-center justify-center w-full max-w-4xl mx-auto">
+            <h1 class="page-title">Opinions</h1>
+            <p class="sub-text text-xl">Coming soon</p>
+        </section>
+
+        <!-- E-books View -->
+        <section id="view-ebooks" class="view-section flex-col items-center justify-center w-full max-w-4xl mx-auto">
+            <h1 class="page-title">E-books</h1>
+            <p class="sub-text text-xl">Coming soon</p>
+        </section>
+
+        <!-- Media Projects View -->
+        <section id="view-media" class="view-section flex-col items-center justify-center w-full max-w-4xl mx-auto">
+            <h1 class="page-title">Media Projects</h1>
+            <p class="sub-text text-xl">Coming soon</p>
+        </section>
+
+    </main>
+
+    <!-- Application Logic (Routing & Color Matching) -->
+    <script>
+        // --- Navigation Logic ---
+        function navigate(viewId) {
+            // Hide all views and remove active state from nav links
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Delay the opacity change slightly to allow display:flex to apply
+            const targetView = document.getElementById(`view-${viewId}`);
+            const targetNav = document.getElementById(`nav-${viewId}`);
+            
+            targetView.style.display = 'flex'; // Temporarily force display for transition
+            
+            // Use a tiny timeout to ensure the browser registers the display change before animating opacity
+            setTimeout(() => {
+                targetView.classList.add('active');
+                targetView.style.display = ''; // Clear inline style to let CSS take over
+            }, 10);
+            
+            targetNav.classList.add('active');
+        }
+
+        // --- Dynamic Color Match Script ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const logoImage = document.getElementById('logo');
+
+            function applyExactBackgroundColor() {
+                try {
+                    // Create an invisible canvas element
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // We only need a 1x1 canvas to sample the specific pixel
+                    canvas.width = 1;
+                    canvas.height = 1;
+                    
+                    // Draw the pixel at (150, 150) of the image onto the canvas to bypass borders
+                    ctx.drawImage(logoImage, 150, 150, 1, 1, 0, 0, 1, 1);
+                    
+                    // Extract the pixel data (RGBA)
+                    const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+                    const r = pixelData[0];
+                    const g = pixelData[1];
+                    const b = pixelData[2];
+                    const alpha = pixelData[3];
+
+                    // Make sure a pixel was successfully read
+                    if (alpha > 0) {
+                        const exactColor = `rgb(${r}, ${g}, ${b})`;
+                        document.body.style.backgroundColor = exactColor;
+                        console.log("Dynamically matched background to logo:", exactColor);
+                    }
+                } catch (error) {
+                    console.warn("Could not dynamically match color due to canvas tainting/security restrictions. Using fallback CSS color.", error);
+                }
+            }
+
+            // Check if image is already loaded (from cache), otherwise wait for load event
+            if (logoImage.complete) {
+                applyExactBackgroundColor();
+            } else {
+                logoImage.addEventListener('load', applyExactBackgroundColor);
+            }
+        });
+    </script>
+</body>
+</html>
